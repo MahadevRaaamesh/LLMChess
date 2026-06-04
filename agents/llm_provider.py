@@ -15,37 +15,9 @@ def get_llm(provider: str, api_key: str = "", model: str = ""):
     # HuggingFace Inference API                                            #
     # ------------------------------------------------------------------ #
     if provider == "huggingface":
-        # We use ChatHuggingFace to handle conversational/chat models properly
-        from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
-        
-        repo_id = model or "openai-community/gpt2"
-        
-        llm = HuggingFaceEndpoint(
-            repo_id=repo_id,
-            huggingfacehub_api_token=api_key,
-            # We don't specify task here to let HF infer, or use text-generation
-            # and then let ChatHuggingFace wrap it.
-            task="text-generation",
-            max_new_tokens=512,
-            temperature=0.3,
-            do_sample=True,
-        )
-        
-        try:
-            return ChatHuggingFace(llm=llm)
-        except Exception:
-            # Fallback for models without chat templates (like gpt2)
-            return llm
-
-    # ------------------------------------------------------------------ #
-    # Novita AI (via Hugging Face Router)                                  #
-    # ------------------------------------------------------------------ #
-    elif provider == "novita":
         from langchain_openai import ChatOpenAI
-        m = model or "meta-llama/Llama-3.2-1B-Instruct"
-        full_model = m if ":" in m else f"{m}:novita"
         return ChatOpenAI(
-            model=full_model,
+            model=model or "Qwen/Qwen2.5-7B-Instruct",
             api_key=api_key,
             base_url="https://router.huggingface.co/v1",
             temperature=0.3,
@@ -94,20 +66,7 @@ def get_llm(provider: str, api_key: str = "", model: str = ""):
             temperature=0.3,
         )
 
-    # ------------------------------------------------------------------ #
-    # Featherless AI (via Hugging Face Router)                             #
-    # ------------------------------------------------------------------ #
-    elif provider == "featherless":
-        from langchain_openai import ChatOpenAI
-        # Hugging Face Unified Router
-        m = model or "Qwen/Qwen2.5-1.5B-Instruct"
-        full_model = m if ":" in m else f"{m}:featherless-ai"
-        return ChatOpenAI(
-            model=full_model,
-            api_key=api_key,
-            base_url="https://router.huggingface.co/v1",
-            temperature=0.3,
-        )
+
 
     # ------------------------------------------------------------------ #
     # Google Gemini                                                        #
@@ -200,5 +159,5 @@ def get_llm(provider: str, api_key: str = "", model: str = ""):
     else:
         raise ValueError(
             f"Unknown provider '{provider}'. "
-            "Choose from: huggingface, novita, featherless, openai, anthropic, ollama, grok, google, groq, deepseek, perplexity, lm-studio, vllm, llama-cpp"
+            "Choose from: huggingface, openai, anthropic, ollama, grok, google, groq, deepseek, perplexity, lm-studio, vllm, llama-cpp"
         )

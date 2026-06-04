@@ -61,6 +61,8 @@ Notes: {scratchpad}
 {error_context}
 
 Workflow: 1.get_king_safety, 2.get_hanging_pieces, 3.get_all_legal_moves (if needed), 4.update_notes, 5.make_move.
+
+CRITICAL: You MUST strictly execute the 'make_move' tool to finalize your turn. Never just type the move out as text!
 """
 
 
@@ -184,7 +186,7 @@ class ChessAgent:
             """Return all legal moves in UCI format."""
             return f"Legal: {', '.join(legal_moves)}"
 
-        def update_notes(notes: str) -> str:
+        def update_notes(notes: str = "No notes") -> str:
             """Save concise plan (max 150 chars)."""
             self.scratchpad = notes.strip()[:150]
             return "Notes saved."
@@ -228,10 +230,10 @@ class ChessAgent:
         )
 
         # ── Create & invoke agent ─────────────────────────────────────────  #
-        from langchain.agents import create_agent
-        graph  = create_agent(self.llm, tools, system_prompt=sys_prompt)
-        inputs = {"messages": [{"role": "user", "content": "Analyze the FEN and play your best move by calling make_move."}]}
         try:
+            from langchain.agents import create_agent
+            graph  = create_agent(self.llm, tools, system_prompt=sys_prompt)
+            inputs = {"messages": [{"role": "user", "content": "Analyze the FEN and play your best move by calling make_move."}]}
             result   = graph.invoke(inputs)
             messages = result["messages"]
         except Exception as exc:

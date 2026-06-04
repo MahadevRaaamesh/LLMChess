@@ -54,12 +54,10 @@ BOARD_PX = SQ * 8
 class SetupDialog(tk.Toplevel):
     """Modal dialog to collect provider / API key / model before the game."""
 
-    PROVIDERS   = ["huggingface", "novita", "featherless", "openai", "anthropic", "google", "groq", "deepseek", "perplexity", "ollama", "grok", "lm-studio", "vllm", "llama-cpp"]
+    PROVIDERS   = ["huggingface", "openai", "anthropic", "google", "groq", "deepseek", "perplexity", "ollama", "grok", "lm-studio", "vllm", "llama-cpp"]
     RETRY_DELAY = 4.0   # seconds between retry attempts
     DEFAULTS  = {
-        "huggingface": "openai-community/gpt2",
-        "novita":      "meta-llama/Llama-3.2-1B-Instruct",
-        "featherless": "Qwen/Qwen2.5-1.5B-Instruct",
+        "huggingface": "Qwen/Qwen2.5-7B-Instruct",
         "openai":      "gpt-4o",
         "anthropic":   "claude-3-5-sonnet-20241022",
         "google":      "gemini-1.5-flash",
